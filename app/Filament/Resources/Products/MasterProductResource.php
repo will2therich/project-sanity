@@ -2,9 +2,6 @@
 
 namespace App\Filament\Resources\Products;
 
-use App\Filament\Resources\MasterProductResource\Pages;
-use App\Filament\Resources\MasterProductResource\RelationManagers;
-use App\Filament\Resources\Products\MasterProductResource\Pages\EditMasterProduct;
 use App\Filament\Resources\Products\MasterProductResource\Pages\EditSubProductGroup;
 use App\Filament\Resources\Products\MasterProductResource\Pages\SubProductGroups;
 use App\Helpers\Pages\ProductsPagesHelper;
