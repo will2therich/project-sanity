@@ -17,6 +17,7 @@ class EditSubProductGroup extends Page
     protected static ?string $navigationLabel = 'Edit Sub-Product Groups';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static bool $shouldRegisterNavigation = false;
+
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
