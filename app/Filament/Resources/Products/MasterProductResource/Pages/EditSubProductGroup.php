@@ -23,11 +23,16 @@ class EditSubProductGroup extends Page
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static bool $shouldRegisterNavigation = false;
 
-    protected $subRecord;
+    protected \App\Models\Products\SubProductGroups $subRecord;
+
     public function mount(int | string $record, $subRecord): void
     {
         $this->subRecord = \App\Models\Products\SubProductGroups::find($subRecord);
         $this->record = $this->resolveRecord($record);
+
+        $this->form->fill([
+            'name' => $this->subRecord->name
+        ]);
     }
 
     public function getSubNavigation(): array
