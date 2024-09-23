@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Products;
 use App\Filament\Resources\MasterProductResource\Pages;
 use App\Filament\Resources\MasterProductResource\RelationManagers;
 use App\Filament\Resources\Products\MasterProductResource\Pages\EditMasterProduct;
+use App\Filament\Resources\Products\MasterProductResource\Pages\EditSubProductGroup;
 use App\Filament\Resources\Products\MasterProductResource\Pages\SubProductGroups;
 use App\Helpers\Pages\ProductsPagesHelper;
 use App\Models\Products\MasterProduct;
@@ -73,7 +74,8 @@ class MasterProductResource extends Resource
             'index' => MasterProductResource\Pages\ListMasterProducts::route('/'),
             'create' => MasterProductResource\Pages\CreateMasterProduct::route('/create'),
             'edit' => MasterProductResource\Pages\EditMasterProduct::route('/{record}/edit'),
-            'subgroups' => SubProductGroups::route('/{record}/sub-groups')
+            'subgroups' => SubProductGroups::route('/{record}/sub-groups'),
+            'edit-subgroup' => EditSubProductGroup::route('/{record}/sub-groups/{subRecord?}')
         ];
     }
 }

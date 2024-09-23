@@ -22,7 +22,6 @@ class SubProductGroups extends Page implements HasTable
     protected static string $resource = MasterProductResource::class;
 
     protected static ?string $navigationLabel = 'Sub-Product Groups';
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string $view = 'filament.resources.products.master-product-resource.pages.sub-product-groups';
@@ -30,6 +29,11 @@ class SubProductGroups extends Page implements HasTable
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
+    }
+
+    public function getSubNavigation(): array
+    {
+        return ProductsPagesHelper::getSubNavigation($this->getRecord());
     }
 
     protected function getHeaderActions() : array
@@ -54,10 +58,6 @@ class SubProductGroups extends Page implements HasTable
         ];
     }
 
-    public function getSubNavigation(): array
-    {
-        return ProductsPagesHelper::getSubNavigation($this->getRecord());
-    }
 
     protected function getTableQuery()
     {
@@ -74,8 +74,16 @@ class SubProductGroups extends Page implements HasTable
 
     protected function getTableActions()
     {
+        $parentRecord = $this->getRecord();
+
         return [
-            \Filament\Tables\Actions\Action::make('Edit'),
+            \Filament\Tables\Actions\Action::make('Edit')
+                ->url(function ($record) use ($parentRecord){
+                    return EditSubProductGroup::getUrl([
+                        'record' => $parentRecord->id,
+                        'subRecord' => $record->id
+                    ]);
+                }),
             \Filament\Tables\Actions\Action::make('Delete')
                 ->requiresConfirmation()
                 ->color(Color::Red)
