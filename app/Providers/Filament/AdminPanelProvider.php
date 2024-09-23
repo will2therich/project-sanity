@@ -53,6 +53,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->navigationGroups([
+                'E-Commerce',
+                'Admin'
             ]);
     }
 }
