@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\Products;
 
 use App\Filament\Resources\Products\MasterProductResource\Pages\EditSubProductGroup;
+use App\Filament\Resources\Products\MasterProductResource\Pages\MasterProductVariants;
 use App\Filament\Resources\Products\MasterProductResource\Pages\SubProductGroups;
 use App\Helpers\Pages\ProductsPagesHelper;
 use App\Models\Products\MasterProduct;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
@@ -71,8 +73,10 @@ class MasterProductResource extends Resource
             'index' => MasterProductResource\Pages\ListMasterProducts::route('/'),
             'create' => MasterProductResource\Pages\CreateMasterProduct::route('/create'),
             'edit' => MasterProductResource\Pages\EditMasterProduct::route('/{record}/edit'),
-            'subgroups' => SubProductGroups::route('/{record}/sub-groups'),
-            'edit-subgroup' => EditSubProductGroup::route('/{record}/sub-groups/{subRecord?}')
+            'subgroups' => SubProductGroups::route('/{record}/{selectedVariantId?}/sub-groups'),
+            'variants' => MasterProductVariants::route('/{record}/variants'),
+            'edit-subgroup' => EditSubProductGroup::route('/{record}/{selectedVariantId?}/sub-groups/{subRecord?}'),
+            'edit-variant' => MasterProductVariants::route('/{record}/variants/{variantId?}')
         ];
     }
 }

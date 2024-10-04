@@ -10,7 +10,9 @@ class SubProduct extends Model
 
     protected $guarded = [];
 
-    protected $casts = [];
+    protected $casts = [
+        'conditionals' => 'array'
+    ];
 
     public function migration(Blueprint $table) {
         $table->id();
@@ -23,7 +25,7 @@ class SubProduct extends Model
         $table->string('external_image')->nullable();
         $table->string('internal_image')->nullable();
         $table->integer('pricing_type')->default(1);
-        $table->integer('pricing_value')->default(1);
+        $table->integer('pricing_value')->nullable();
         $table->longText('conditionals')->nullable();
         $table->longText('inputs')->nullable();
         $table->boolean('flip_entire_image')->default(false);

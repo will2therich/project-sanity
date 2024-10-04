@@ -6,6 +6,7 @@ use App\Filament\Resources\Products\SubProductResource\Pages;
 use App\Filament\Resources\Products\SubProductResource\RelationManagers;
 use App\Models\Products\SubProduct;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -24,17 +25,21 @@ class SubProductResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function generateForm()
+    public static function generateForm($subRecordId = 0)
     {
         return [
             Section::make('Basic Details')
                 ->columns(2)
                 ->schema([
+                    Hidden::make('sub_product_group_id')
+                        ->default($subRecordId),
                     TextInput::make('name')
-                        ->columnSpan(2),
+                        ->columnSpan(2)
+                        ->required(),
                     Toggle::make('flip_entire_image')
                         ->inline(false),
                     Toggle::make('conditionals_or_mode')
+                        ->label('Run conditionals in \'Or\' mode')
                         ->inline(false),
                 ]),
             Section::make('Imagery')
@@ -49,9 +54,10 @@ class SubProductResource extends Resource
                 ->schema([
                     Select::make('pricing_type')
                         ->options([
-                            'fixed_uplift' => 'Fixed Uplift',
-                            'advanced' => 'Advanced Price Builder'
-                        ]),
+                            1 => 'Fixed Uplift',
+                            2 => 'Advanced Price Builder'
+                        ])
+                        ->required(),
                     TextInput::make('pricing_value'),
                 ]),
             Section::make('Conditionals Setup')

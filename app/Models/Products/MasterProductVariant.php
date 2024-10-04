@@ -5,7 +5,7 @@ namespace App\Models\Products;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 
-class SubProductGroups extends Model
+class MasterProductVariant extends Model
 {
 
     protected $guarded = [];
@@ -16,7 +16,6 @@ class SubProductGroups extends Model
         $table->id();
         $table->string('uuid');
         $table->foreignId('product_id');
-        $table->foreignId('product_variant_id');
         $table->string('name');
         $table->timestamps();
         $table->softDeletes();

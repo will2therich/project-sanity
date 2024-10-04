@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Products\MasterProductResource\Pages;
 
 use App\Filament\Resources\Products\MasterProductResource;
 use App\Helpers\Pages\ProductsPagesHelper;
+use App\Models\Products\MasterProductVariant;
 use Filament\Support\Colors\Color;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -15,24 +16,20 @@ use App\Models\Products\SubProductGroups as SubProductGroupModel;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Str;
 
-class SubProductGroups extends Page implements HasTable
+class MasterProductVariants extends Page implements HasTable
 {
     use InteractsWithRecord, InteractsWithTable;
 
     protected static string $resource = MasterProductResource::class;
 
-    protected static ?string $navigationLabel = 'Sub-Product Groups';
+    protected static ?string $navigationLabel = 'Variants';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string $view = 'filament.resources.products.master-product-resource.pages.sub-product-groups';
-    protected static bool $shouldRegisterNavigation = false;
 
-    protected $selectedVariantId;
-
-    public function mount(int | string $record, $selectedVariantId): void
+    public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
-        $this->selectedVariantId = $selectedVariantId;
     }
 
     public function getSubNavigation(): array
@@ -45,15 +42,15 @@ class SubProductGroups extends Page implements HasTable
         $record = $this->getRecord();
 
         return [
-            Action::make('Create New Sub Group')
+            Action::make('Create New Variant')
                 ->form([
-                    TextInput::make('group_name')
+                    TextInput::make('variant_name')
                         ->required()
                 ])
                 ->action(function ($data) use ($record) {
-                    if (isset($data['group_name'])) {
-                        SubProductGroupModel::create([
-                            'name' => $data['group_name'],
+                    if (isset($data['variant_name'])) {
+                        MasterProductVariant::create([
+                            'name' => $data['variant_name'],
                             'product_id' => $record->id,
                             'uuid' => Str::uuid()
                         ])->save();
@@ -65,8 +62,8 @@ class SubProductGroups extends Page implements HasTable
 
     protected function getTableQuery()
     {
-        return SubProductGroupModel::query()
-            ->where('product_variant_id', $this->selectedVariantId);
+        return MasterProductVariant::query()
+            ->where('product_id', $this->getRecord()->id);
     }
 
     protected function getTableColumns(): array
@@ -79,15 +76,20 @@ class SubProductGroups extends Page implements HasTable
     protected function getTableActions()
     {
         $parentRecord = $this->getRecord();
-        $selectedVariant = $this->selectedVariantId;
 
         return [
+            \Filament\Tables\Actions\Action::make('Sub Product Groups')
+                ->url(function ($record) use ($parentRecord){
+                    return SubProductGroups::getUrl([
+                        'record' => $parentRecord->id,
+                        'selectedVariantId' => $record->id
+                    ]);
+                }),
             \Filament\Tables\Actions\Action::make('Edit')
-                ->url(function ($record) use ($parentRecord, $selectedVariant){
+                ->url(function ($record) use ($parentRecord){
                     return EditSubProductGroup::getUrl([
                         'record' => $parentRecord->id,
-                        'subRecord' => $record->id,
-                        'selectedVariantId' => $selectedVariant
+                        'subRecord' => $record->id
                     ]);
                 }),
             \Filament\Tables\Actions\Action::make('Delete')

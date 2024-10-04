@@ -15,8 +15,10 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class EditSubProductGroup extends Page implements HasTable
@@ -32,10 +34,13 @@ class EditSubProductGroup extends Page implements HasTable
 
     protected \App\Models\Products\SubProductGroups $subRecord;
 
-    public function mount(int | string $record, $subRecord): void
+    protected $selectedVariantId;
+
+    public function mount(int | string $record, $subRecord, $selectedVariantId): void
     {
         $this->subRecord = \App\Models\Products\SubProductGroups::find($subRecord);
         $this->record = $this->resolveRecord($record);
+        $this->selectedVariantId = $selectedVariantId;
 
         $this->form->fill([
             'name' => $this->subRecord->name
@@ -62,15 +67,40 @@ class EditSubProductGroup extends Page implements HasTable
             ->where('sub_product_group_id', $this->getRecord()->id);
     }
 
+    public function getSubRecordId($uri = '')
+    {
+        if (empty($uri)) {
+            $req = Request::createFromGlobals();
+            $uri = $req->getUri();
+        }
+
+        $url_path = parse_url($uri, PHP_URL_PATH);
+        $basename = pathinfo($url_path, PATHINFO_BASENAME);
+
+        return $basename;
+    }
+
+    protected function getTableColumns(): array
+    {
+        return [
+            TextColumn::make('name'),
+            TextColumn::make('uuid')
+        ];
+    }
+
     protected function getHeaderActions() : array
     {
         $record = $this->getRecord();
+        $subRecordId = $this->getSubRecordId($_SERVER['HTTP_REFERER']);
 
         return [
             Action::make('Create New Sub Product')
                 ->form(SubProductResource::generateForm())
-                ->action(function ($data) use ($record) {
-                    dd($data);
+                ->action(function ($data) use ($record, $subRecordId) {
+                    $data['product_id'] = $record->id;
+                    $data['uuid'] = Str::uuid();
+                    $data['sub_product_group_id'] = $subRecordId;
+                    SubProduct::create($data);
                 })
         ];
     }
