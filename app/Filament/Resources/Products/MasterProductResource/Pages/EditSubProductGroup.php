@@ -3,7 +3,11 @@
 namespace App\Filament\Resources\Products\MasterProductResource\Pages;
 
 use App\Filament\Resources\Products\MasterProductResource;
+use App\Filament\Resources\Products\SubProductResource;
 use App\Helpers\Pages\ProductsPagesHelper;
+use App\Models\Products\SubProduct;
+use App\Models\Products\SubProductGroups as SubProductGroupModel;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -11,10 +15,13 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Str;
 
-class EditSubProductGroup extends Page
+class EditSubProductGroup extends Page implements HasTable
 {
-    use InteractsWithRecord, InteractsWithForms;
+    use InteractsWithRecord, InteractsWithForms, InteractsWithTable;
 
     protected static string $resource = MasterProductResource::class;
 
@@ -46,12 +53,27 @@ class EditSubProductGroup extends Page
            Section::make('Sub-Group Details')->schema([
                TextInput::make('name'),
            ]),
-            Section::make('Products')->schema([
-                Repeater::make('Products')
-                    ->grid()
-                    ->columns(2)
-            ])
         ]);
     }
+
+    protected function getTableQuery()
+    {
+        return SubProduct::query()
+            ->where('sub_product_group_id', $this->getRecord()->id);
+    }
+
+    protected function getHeaderActions() : array
+    {
+        $record = $this->getRecord();
+
+        return [
+            Action::make('Create New Sub Product')
+                ->form(SubProductResource::generateForm())
+                ->action(function ($data) use ($record) {
+                    dd($data);
+                })
+        ];
+    }
+
 
 }
