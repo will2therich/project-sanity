@@ -50,6 +50,8 @@ class ConditionalsService
     {
         $formArr = [];
         $registeredFields = [];
+        $dynamicFormArr = [];
+        $conditionalOptions = [];
 
         // Default Conditional Fields
         $formArr[] = Select::make('conditional_field')
@@ -75,13 +77,25 @@ class ConditionalsService
                 }
             });
 
+
+
         // Dynamically create fields
 
         foreach ($this->conditionalClasses as $conditionalClass) {
-            dd($conditionalClass);
+            $classInstance = app($conditionalClass['class']);
+            $conditionalOptions[$classInstance::CONDITIONAL_ID] = $classInstance::CONDITIONAL_NAME;
+
+            if (method_exists($classInstance, 'form')) {
+                $classInstance->form($dynamicFormArr, $registeredFields);
+            }
         }
 
+        $formArr[] = Select::make('conditional_type')
+                ->options($conditionalOptions)
+                ->reactive();
 
+
+        $formArr = array_merge($formArr, $dynamicFormArr);
         return $formArr;
 
     }
