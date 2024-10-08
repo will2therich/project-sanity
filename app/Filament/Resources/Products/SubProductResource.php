@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Products;
 use App\Filament\Resources\Products\SubProductResource\Pages;
 use App\Filament\Resources\Products\SubProductResource\RelationManagers;
 use App\Models\Products\SubProduct;
+use App\Services\ConditionalsService;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -25,8 +26,10 @@ class SubProductResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function generateForm($subRecordId = 0)
+    public static function generateForm($subRecordId = 0, $record)
     {
+        $conditionalsService = new ConditionalsService($record);
+
         return [
             Section::make('Basic Details')
                 ->columns(2)
@@ -65,7 +68,7 @@ class SubProductResource extends Resource
                 ->schema([
                     Repeater::make('conditionals')
                         ->grid()
-                        ->schema([])
+                        ->schema($conditionalsService->generateConditionalsForm())
                 ])
         ];
 

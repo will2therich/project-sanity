@@ -95,7 +95,7 @@ class EditSubProductGroup extends Page implements HasTable
 
         return [
             Action::make('Create New Sub Product')
-                ->form(SubProductResource::generateForm())
+                ->form(SubProductResource::generateForm($subRecordId, $record))
                 ->action(function ($data) use ($record, $subRecordId) {
                     $data['product_id'] = $record->id;
                     $data['uuid'] = Str::uuid();
